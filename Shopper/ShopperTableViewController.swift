@@ -55,6 +55,20 @@ class ShopperTableViewController: UITableViewController {
         tableView.reloadData()
     }
     
+    func deleteShoppingList(item: ShoppingList) {
+        
+        context.delete(item)
+        
+        do{
+            // use context to delete ShoppingListItems into CoreData
+            try context.save()
+        } catch {
+            print("Error deleting ShoppingList from CoreData!")
+        }
+        
+        loadShoppingLists()
+    }
+    
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         
         // declate Text Field Variables for the input of the name, store, and date
@@ -81,6 +95,8 @@ class ShopperTableViewController: UITableViewController {
             
             // save ShoppingLists into CoreData
             self.saveShoppingLists()
+            
+           
         })
         
         // disavle the action that will occur when the Add List button is pushed
@@ -175,17 +191,16 @@ class ShopperTableViewController: UITableViewController {
     }
     */
 
-    /*
+    
     // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+            let item = shoppingLists[indexPath.row]
+            deleteShoppingList(item: item)
+        } 
     }
-    */
+    
 
     /*
     // Override to support rearranging the table view.
