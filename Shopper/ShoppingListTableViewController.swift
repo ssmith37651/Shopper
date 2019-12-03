@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import UserNotifications
 
 class ShoppingListTableViewController: UITableViewController {
     
@@ -96,6 +97,39 @@ class ShoppingListTableViewController: UITableViewController {
         }
         
         loadShoppingListItems()
+    }
+    
+    func shoppingListDoneNotification () {
+        
+        var done = true
+        
+        // loop through the ShoppingListItems
+        for item in shoppingListItems {
+            // check if any of the purchased attributes are false
+            if item.purchased == false {
+                // set done to false
+                done = false
+            }
+        }
+        
+        // check if done is true
+        if done == true {
+            
+            // create content object that controls the content and the sound of the notification
+            let content = UNMutableNotificationContent()
+            content.title = "Shopper"
+            content.body = "Shopping List Complete"
+            content.sound = UNNotificationSound.default
+            
+            // create request object that defines when the notification will be sent and if it should be sent repeatidly
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+            
+            // create request object that is responsible for creating the notification
+            let request = UNNotificationRequest(identifier: "shopperIdentifier", content: content, trigger: trigger)
+            
+            // post the notification
+            UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
+        }
     }
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
@@ -268,6 +302,8 @@ class ShoppingListTableViewController: UITableViewController {
         
         // call deselectRow method to allow update to be visible in table view controller
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        shoppingListDoneNotification()
     }
     
     // Override to support editing the table view.
